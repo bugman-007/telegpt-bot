@@ -2,23 +2,23 @@ require("dotenv").config();
 const OpenAI = require("openai");
 const TelegramBot = require("node-telegram-bot-api");
 
-const openai = new OpenAI();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Create an async function to handle the OpenAI request
 async function generateHaiku() {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4", // Fixed model name
       messages: [
         { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: "Write a haiku about recursion in programming.",
-        },
+        { role: "assistant", content: fullInformation },
+        { role: "user", content: `${userMessage}` },
       ],
+      model: "gpt-4o",
     });
-
-    console.log(completion.choices[0].message);
+    const completionMessage = completion.choices[0].message;
+    console.log(completionMessage.content);
   } catch (error) {
     console.error("Error generating haiku:", error);
   }
