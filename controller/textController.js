@@ -15,8 +15,9 @@ async function textController(userMessage) {
       ],
       model: "gpt-4o",
     });
-    const completionMessage = completion.choices[0].message;
-    return completionMessage.content;
+    const completionMessage = completion.choices[0].message.content;
+    const result = completionMessage.replace(/\*\*(.*?)\*\*/g, "*$1*");
+    return result;
   } catch (error) {
     console.error("Error generating text:", error);
   }
