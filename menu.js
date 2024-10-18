@@ -1,5 +1,6 @@
 require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
+const { textController } = require("./controller/textController");
 
 // Replace 'YOUR_TELEGRAM_BOT_TOKEN' with your BotFather token
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
@@ -27,16 +28,23 @@ bot.onText(/\/start/, (msg) => {
 });
 
 // Listen for text messages to respond to menu options
-bot.on("message", (msg) => {
+bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
 
   if (text === "Image") {
-    bot.sendMessage(chatId, "You selected Image");
+    bot.sendMessage(chatId, "Please input your prompt for image generation");
+    // Add further logic here to handle image generation
   } else if (text === "Text") {
-    bot.sendMessage(chatId, "You selected Text");
+    bot.sendMessage(chatId, "Please input your text prompt");
+    bot.once("message", async (msg) => {
+      const userInput = msg.text;
+      const generatedText = await textController(userInput);
+      bot.sendMessage(chatId, generatedText);
+    });
   } else if (text === "Audio") {
     bot.sendMessage(chatId, "You selected Audio");
+    // Add further logic here to handle audio generation
   } else if (text === "Help") {
     bot.sendMessage(chatId, "Here is some help information...");
   }
