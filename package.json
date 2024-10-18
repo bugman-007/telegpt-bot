@@ -1,7 +1,9 @@
 {
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "menu": "nodemon menu.js",
+    "another": "nodemon another.js"
   },
   "name": "telegpt-bot",
   "version": "1.0.0",
