@@ -2,7 +2,7 @@ require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const fs = require("fs");
 
-const { longLifeCoinPromotion } = require("./config");
+const { promotion } = require("./config");
 
 const { textController } = require("./controller/textController");
 const { imageController } = require("./controller/imageController");
@@ -25,7 +25,7 @@ const modes = {
 
 function sendPromotionToSubscribers() {
   subscribers.forEach((subscriberId) => {
-    bot.sendMessage(subscriberId, longLifeCoinPromotion, {
+    bot.sendMessage(subscriberId, promotion, {
       parse_mode: "Markdown",
     });
   });
@@ -52,7 +52,7 @@ setInterval(() => {
 
 bot.onText(/\/info/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, longLifeCoinPromotion, { parse_mode: "Markdown" });
+  bot.sendMessage(chatId, promotion, { parse_mode: "Markdown" });
 });
 
 bot.onText(/\/start/, (msg) => {
