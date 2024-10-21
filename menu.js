@@ -1,11 +1,20 @@
 require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
+const fs = require("fs");
+
+const { promotion } = require("./config");
+
 const { textController } = require("./controller/textController");
 const { imageController } = require("./controller/imageController");
 const { audioController } = require("./controller/audioController");
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const chatState = {};
+const subscribers = [];
+
+if (fs.existsSync("subscribers.json")) {
+  subscribers = JSON.parse(fs.readFileSync("subscribers.json"));
+}
 
 const modes = {
   TEXT: "text",
@@ -14,16 +23,37 @@ const modes = {
   QUIT: null,
 };
 
+function sendPromotionToSubscribers() {
+  subscribers.forEach((subscriberId) => {
+    bot.sendMessage(subscriberId, promotion, {
+      parse_mode: "Markdown",
+    });
+  });
+  console.log("Promotion message sent to all subscribers!");
+}
+
 function showMainMenu(chatId) {
   const options = {
     reply_markup: {
-      keyboard: [["/text", "/image", "/audio", "/quit"]],
+      keyboard: [
+        ["/text", "/image", "/audio"],
+        ["/info", "/quit"],
+      ],
       resize_keyboard: true,
       one_time_keyboard: true,
     },
   };
   bot.sendMessage(chatId, "Please choose an option:", options);
 }
+
+setInterval(() => {
+  sendPromotionToSubscribers();
+}, 10000); // 1 hour = 60 * 60 * 1000 milliseconds
+
+bot.onText(/\/info/, (msg) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, promotion, { parse_mode: "Markdown" });
+});
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
